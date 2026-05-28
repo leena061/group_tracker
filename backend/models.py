@@ -22,6 +22,8 @@ class Project(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(String)
+    deadline = Column(String, nullable=True)
+    invite_code = Column(String, unique=True, index=True)
     github_repo = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 

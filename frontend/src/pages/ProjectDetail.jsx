@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import api from "../api/axios"
 import { useAuth } from "../context/AuthContext"
+import ScoreChart from "../components/ScoreChart"
+import ScoreCard from "../components/ScoreCard"
 
 const TASK_TYPES = ["code", "design", "docs", "research"]
 
@@ -49,6 +51,8 @@ export default function ProjectDetail() {
   const [project, setProject] = useState(null)
   const [members, setMembers] = useState([])
   const [tasks, setTasks] = useState([])
+  const [scores, setScores] = useState([])
+  const [imbalance, setImbalance] = useState(null)
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -65,11 +69,14 @@ export default function ProjectDetail() {
     Promise.all([
       api.get(`/projects/${projectId}`),
       api.get(`/projects/${projectId}/members`),
-      api.get(`/projects/${projectId}/tasks`)
-    ]).then(([projRes, membersRes, tasksRes]) => {
+      api.get(`/projects/${projectId}/tasks`),
+      api.get(`/projects/${projectId}/scores`)
+    ]).then(([projRes, membersRes, tasksRes, scoresRes]) => {
       setProject(projRes.data)
       setMembers(membersRes.data)
       setTasks(tasksRes.data)
+      setScores(scoresRes.data.scores)
+      setImbalance(scoresRes.data.imbalance)
     }).catch(() => navigate("/dashboard"))
       .finally(() => setLoading(false))
   }, [projectId])
@@ -100,6 +107,10 @@ export default function ProjectDetail() {
       setTasks([...tasks, res.data])
       setForm({ title: "", description: "", task_type: "code", hours: "" })
       setShowForm(false)
+      // Refresh scores after new task
+      const scoresRes = await api.get(`/projects/${projectId}/scores`)
+      setScores(scoresRes.data.scores)
+      setImbalance(scoresRes.data.imbalance)
     } catch (err) {
       setError(err.response?.data?.detail || "Failed to log task")
     } finally {
@@ -155,6 +166,37 @@ export default function ProjectDetail() {
             ))}
           </div>
         </div>
+
+        {/* Scores section */}
+        {scores.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold mb-4">Contribution Scores</h2>
+
+            {imbalance?.imbalanced && (
+              <div className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 rounded-xl p-4 mb-4 flex items-start gap-3">
+                <span className="text-xl">⚠️</span>
+                <div>
+                  <p className="font-semibold text-sm">Workload imbalance detected</p>
+                  <p className="text-xs mt-1 text-yellow-300">
+                    One member is contributing significantly more than others.
+                    Consider redistributing tasks before the deadline.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              {scores.map((member, i) => (
+                <ScoreCard key={member.user_id} member={member} rank={i} />
+              ))}
+            </div>
+
+            <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+              <h3 className="text-white font-semibold mb-4 text-sm">Score Comparison</h3>
+              <ScoreChart scores={scores} />
+            </div>
+          </div>
+        )}
 
         {/* Log task button */}
         <div className="flex justify-between items-center mb-4">

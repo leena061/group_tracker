@@ -143,3 +143,33 @@ def get_members(
             "role": m.role
         })
     return result
+@router.delete("/{project_id}/members/{user_id}")
+def remove_member(
+    project_id: int,
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    # Only admin can remove members
+    admin_check = db.query(models.ProjectMember).filter(
+        models.ProjectMember.project_id == project_id,
+        models.ProjectMember.user_id == current_user.id,
+        models.ProjectMember.role == "admin"
+    ).first()
+    if not admin_check:
+        raise HTTPException(status_code=403, detail="Only admin can remove members")
+
+    # Can't remove yourself
+    if user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Cannot remove yourself")
+
+    member = db.query(models.ProjectMember).filter(
+        models.ProjectMember.project_id == project_id,
+        models.ProjectMember.user_id == user_id
+    ).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Member not found")
+
+    db.delete(member)
+    db.commit()
+    return {"message": "Member removed"}

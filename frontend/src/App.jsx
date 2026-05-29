@@ -5,6 +5,7 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import Dashboard from "./pages/Dashboard"
 import JoinProject from "./pages/JoinProject"
+import ProjectDetail from "./pages/ProjectDetail"
 
 export default function App() {
   return (
@@ -22,6 +23,11 @@ export default function App() {
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/projects/:projectId" element={
+            <ProtectedRoute>
+              <ProjectDetail />
             </ProtectedRoute>
           } />
         </Routes>

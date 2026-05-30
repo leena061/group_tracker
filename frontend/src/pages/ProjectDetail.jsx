@@ -90,6 +90,7 @@ export default function ProjectDetail() {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
+
   const handleRemoveMember = async (userId) => {
     if (!window.confirm("Remove this member from the project?")) return
     try {
@@ -129,7 +130,23 @@ export default function ProjectDetail() {
   )
 
   const isAdmin = members.find(m => m.id === user?.id)?.role === "admin"
-
+  const downloadReport = async () => {
+    try {
+      const res = await api.get(`/projects/${projectId}/report`, {
+        responseType: "blob"
+      })
+      const url = window.URL.createObjectURL(new Blob([res.data]))
+      const link = document.createElement("a")
+      link.href = url
+      link.setAttribute("download", `${project.name}_report.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+    } catch (err) {
+      console.error(err)
+      alert("Failed to generate report")
+    }
+  }
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <nav className="bg-gray-800 border-b border-gray-700 px-6 py-4 flex justify-between items-center">
@@ -143,9 +160,17 @@ export default function ProjectDetail() {
           <span className="text-gray-600">/</span>
           <h1 className="text-lg font-bold text-white">{project?.name}</h1>
         </div>
-        {project?.deadline && (
-          <span className="text-gray-400 text-sm">📅 Due: {project.deadline}</span>
-        )}
+        <div className="flex items-center gap-3">
+          {project?.deadline && (
+            <span className="text-gray-400 text-sm">📅 Due: {project.deadline}</span>
+          )}
+          <button
+            onClick={downloadReport}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+          >
+            📄 Download Report
+          </button>
+        </div>
       </nav>
 
       <main className="max-w-5xl mx-auto px-6 py-8">

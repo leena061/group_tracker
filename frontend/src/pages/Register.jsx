@@ -4,7 +4,13 @@ import { useAuth } from "../context/AuthContext"
 import api from "../api/axios"
 
 export default function Register() {
-  const [form, setForm] = useState({ name: "", email: "", password: "", github_email: "" })
+  const [form, setForm] = useState({ 
+    name: "", 
+    email: "", 
+    password: "", 
+    github_email: "",
+    github_username: ""
+  })
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
@@ -83,7 +89,20 @@ export default function Register() {
           </div>
           <div>
             <label className="text-gray-300 text-sm block mb-1">
-              GitHub email <span className="text-gray-500">(optional — for commit tracking)</span>
+              GitHub username <span className="text-gray-500">(optional — for commit tracking)</span>
+            </label>
+            <input
+              name="github_username"
+              type="text"
+              value={form.github_username}
+              onChange={handleChange}
+              className="w-full bg-gray-700 text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g. leena061"
+            />
+          </div>
+          <div>
+            <label className="text-gray-300 text-sm block mb-1">
+              GitHub email <span className="text-gray-500">(optional — fallback for commit tracking)</span>
             </label>
             <input
               name="github_email"

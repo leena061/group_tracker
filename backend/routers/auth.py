@@ -13,6 +13,7 @@ class RegisterRequest(BaseModel):
     email: str
     password: str
     github_email: Optional[str] = None
+    github_username: Optional[str] = None
 
 class LoginRequest(BaseModel):
     email: str
@@ -42,7 +43,8 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
         name=request.name,
         email=request.email,
         password=hash_password(request.password),
-        github_email=request.github_email.lower() if request.github_email else None
+        github_email=request.github_email.lower() if request.github_email else None,
+        github_username=request.github_username.lower() if request.github_username else None
     )
     db.add(user)
     db.commit()

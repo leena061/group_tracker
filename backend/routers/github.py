@@ -55,14 +55,15 @@ async def sync_github(
     ).all()
 
     member_emails = {}
+    member_usernames = {}
     for m in members:
         user = db.query(models.User).filter(models.User.id == m.user_id).first()
         if user:
-            # Match by registration email
             member_emails[user.email.lower()] = user.id
-            # Also match by github_email if set
             if user.github_email:
                 member_emails[user.github_email.lower()] = user.id
+            if user.github_username:
+                member_usernames[user.github_username.lower()] = user.id
 
     # Clear old commits for this project before syncing fresh
     db.query(models.GitHubCommit).filter(
@@ -76,6 +77,8 @@ async def sync_github(
 
     for commit in commits:
         user_id = member_emails.get(commit["author_email"])
+        if not user_id and commit.get("github_username"):
+            user_id = member_usernames.get(commit["github_username"].lower())
         task_type = classify_commit(commit["message"])
 
         db_commit = models.GitHubCommit(

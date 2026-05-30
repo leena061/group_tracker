@@ -1,2 +1,3 @@
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhcmp1bkB0ZXN0LmNvbSIsImV4cCI6MTc3OTg3NzM4OX0.JXrZMzrd7tSQmCnTRZQMz_8g8_K6aY2boeZqbMMyoEE",
     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhcmp1bkB0ZXN0LmNvbSIsImV4cCI6MTc3OTg3NzUxM30.IYdKKjPRHvs-XuoQPNYbQvwHo-FgQvR10nvu6xZGUAk"
+     python -m uvicorn main:app --reload

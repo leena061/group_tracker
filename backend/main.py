@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine
 import models
-from routers import users, auth, projects, tasks, scores
+from routers import users, auth, projects, tasks, scores, github
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -20,6 +20,7 @@ app.include_router(users.router)
 app.include_router(projects.router)
 app.include_router(tasks.router)
 app.include_router(scores.router)
+app.include_router(github.router)
 
 @app.get("/")
 def root():

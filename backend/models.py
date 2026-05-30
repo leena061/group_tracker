@@ -10,6 +10,7 @@ class User(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
+    github_email = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     projects = relationship("ProjectMember", back_populates="user")
@@ -37,7 +38,7 @@ class ProjectMember(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     project_id = Column(Integer, ForeignKey("projects.id"))
-    role = Column(String, default="member")  # admin or member
+    role = Column(String, default="member")
     joined_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="projects")
@@ -50,7 +51,7 @@ class Task(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
     description = Column(String)
-    task_type = Column(String, nullable=False)  # code, design, docs, research
+    task_type = Column(String, nullable=False)
     hours = Column(Float, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"))
     project_id = Column(Integer, ForeignKey("projects.id"))
@@ -58,3 +59,18 @@ class Task(Base):
 
     user = relationship("User", back_populates="tasks")
     project = relationship("Project", back_populates="tasks")
+
+
+class GitHubCommit(Base):
+    __tablename__ = "github_commits"
+
+    id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(Integer, ForeignKey("projects.id"))
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    sha = Column(String, unique=True, index=True)
+    message = Column(String)
+    author_name = Column(String)
+    author_email = Column(String)
+    task_type = Column(String)
+    date = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)

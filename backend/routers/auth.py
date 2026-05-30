@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
+from typing import Optional
 from database import get_db
 import models
 from auth import hash_password, verify_password, create_access_token, get_current_user
@@ -11,6 +12,7 @@ class RegisterRequest(BaseModel):
     name: str
     email: str
     password: str
+    github_email: Optional[str] = None
 
 class LoginRequest(BaseModel):
     email: str
@@ -39,7 +41,8 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
     user = models.User(
         name=request.name,
         email=request.email,
-        password=hash_password(request.password)
+        password=hash_password(request.password),
+        github_email=request.github_email.lower() if request.github_email else None
     )
     db.add(user)
     db.commit()

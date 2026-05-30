@@ -103,3 +103,21 @@ def detect_imbalance(scores: dict) -> dict:
         }
 
     return {"imbalanced": False}
+def calculate_scores_with_commits(tasks: list, commits: list, members: list) -> dict:
+    """
+    Extended scoring that includes GitHub commits.
+    Each commit counts as 0.5 hours of code work.
+    """
+    # Convert commits to task-like format
+    commit_tasks = [
+        {
+            "user_id": c["user_id"],
+            "task_type": c["task_type"],
+            "hours": 0.5  # each commit = 0.5 hours equivalent
+        }
+        for c in commits
+        if c.get("user_id") is not None
+    ]
+
+    all_tasks = tasks + commit_tasks
+    return calculate_scores(all_tasks, members)

@@ -4,6 +4,7 @@ import api from "../api/axios"
 import { useAuth } from "../context/AuthContext"
 import ScoreChart from "../components/ScoreChart"
 import ScoreCard from "../components/ScoreCard"
+import GitHubSync from "../components/GitHubSync"
 
 const TASK_TYPES = ["code", "design", "docs", "research"]
 
@@ -53,6 +54,7 @@ export default function ProjectDetail() {
   const [tasks, setTasks] = useState([])
   const [scores, setScores] = useState([])
   const [imbalance, setImbalance] = useState(null)
+  const [commits, setCommits] = useState([])       // ← added
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -77,6 +79,9 @@ export default function ProjectDetail() {
       setTasks(tasksRes.data)
       setScores(scoresRes.data.scores)
       setImbalance(scoresRes.data.imbalance)
+      api.get(`/projects/${projectId}/github/commits`)  // ← added
+        .then(res => setCommits(res.data))
+        .catch(() => {})
     }).catch(() => navigate("/dashboard"))
       .finally(() => setLoading(false))
   }, [projectId])
@@ -107,7 +112,6 @@ export default function ProjectDetail() {
       setTasks([...tasks, res.data])
       setForm({ title: "", description: "", task_type: "code", hours: "" })
       setShowForm(false)
-      // Refresh scores after new task
       const scoresRes = await api.get(`/projects/${projectId}/scores`)
       setScores(scoresRes.data.scores)
       setImbalance(scoresRes.data.imbalance)
@@ -197,6 +201,20 @@ export default function ProjectDetail() {
             </div>
           </div>
         )}
+
+        {/* GitHub section ← added */}
+        <GitHubSync
+          projectId={projectId}
+          isAdmin={isAdmin}
+          commits={commits}
+          onSynced={() => {
+            api.get(`/projects/${projectId}/github/commits`).then(r => setCommits(r.data))
+            api.get(`/projects/${projectId}/scores`).then(r => {
+              setScores(r.data.scores)
+              setImbalance(r.data.imbalance)
+            })
+          }}
+        />
 
         {/* Log task button */}
         <div className="flex justify-between items-center mb-4">

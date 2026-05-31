@@ -49,15 +49,15 @@ export default function Register() {
       <div className="grid-bg" style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "60px 72px", borderRight: "1px solid rgba(255,255,255,0.05)", background: "radial-gradient(ellipse 80% 60% at 30% 50%, rgba(59,130,246,0.07), transparent)" }}>
         <div style={{ maxWidth: 560 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 56 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: "linear-gradient(135deg,#3b82f6,#2563eb)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 800, boxShadow: "0 0 16px rgba(59,130,246,0.4)", cursor: "pointer" }} onClick={() => navigate("/")}>G</div>
-            <span style={{ color: "white", fontWeight: 700, fontSize: 18 }}>GroupTracker</span>
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: "linear-gradient(135deg,#3b82f6,#2563eb)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 800, boxShadow: "0 0 16px rgba(59,130,246,0.4)", cursor: "pointer" }} onClick={() => navigate("/")}>C</div>
+            <span style={{ color: "white", fontWeight: 700, fontSize: 18 }}>ContribIQ</span>
           </div>
 
           <h2 className="syne" style={{ fontSize: 48, fontWeight: 800, color: "white", lineHeight: 1.1, marginBottom: 24 }}>
             One person doing<br />all the work?
           </h2>
           <p style={{ color: "#6b7280", fontSize: 16, lineHeight: 1.8, marginBottom: 52, maxWidth: 460 }}>
-            GroupTracker makes every contribution visible. Create a project, invite your team, and get fair scores automatically.
+            ContribIQ makes every contribution visible. Create a project, invite your team, and get fair scores automatically.
           </p>
 
           {/* Score mockup — bigger */}
